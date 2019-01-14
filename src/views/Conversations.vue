@@ -9,7 +9,9 @@
                 <Header class="title_bar_wrapper">
                     <Title></Title>
                 </Header>
-                <Content>Content</Content>
+                <Content class="message_content_wrapper">
+                    <MessageContent></MessageContent>
+                </Content>
                 <Footer class="send_message_wrapper">
                     <SendMessage></SendMessage>
                 </Footer>
@@ -22,13 +24,15 @@
     import SidebarList from '../components/SidebarList'
     import Title from '../components/Title'
     import SendMessage from '../components/SendMessage'
+    import MessageContent from '../components/MessageContent'
 
     export default {
         name: "Conversations",
         components: {
             SidebarList,
             Title,
-            SendMessage
+            SendMessage,
+            MessageContent
         },
         data(){
             return{
@@ -63,6 +67,11 @@
         }
         .title_bar_wrapper{
             background-color: $title-color;
+        }
+        .message_content_wrapper{
+            height: 100%;
+            overflow: auto;
+            background: url("../assets/bgchart.jpg") center no-repeat;
         }
         .send_message_wrapper{
             border-top: 1px solid #ddd;
