@@ -3,68 +3,22 @@
         <div class="message_list">
             <ul>
                 <li class="other_send">
-                    <img src="../assets/logo.png" alt="">
-                    <div class="content">hhhhhh</div>
+                    <div class="time">
+                        <span>2019/1/12 17:53</span>
+                    </div>
+                    <div class="from">
+                        <img src="../assets/logo.png" alt="">
+                        <div class="content">hhhhhh</div>
+                    </div>
                 </li>
                 <li class="self_send">
-                    <img src="../assets/avatar.jpeg" alt="">
-                    <div class="content">hhhhhh</div>
-                </li>
-                <li class="other_send">
-                    <img src="../assets/logo.png" alt="">
-                    <div class="content">hhhhhh</div>
-                </li>
-                <li class="self_send">
-                    <img src="../assets/avatar.jpeg" alt="">
-                    <div class="content">hhhhhh</div>
-                </li>
-                <li class="other_send">
-                    <img src="../assets/logo.png" alt="">
-                    <div class="content">hhhhhh</div>
-                </li>
-                <li class="self_send">
-                    <img src="../assets/avatar.jpeg" alt="">
-                    <div class="content">hhhhhh</div>
-                </li>
-                <li class="other_send">
-                    <img src="../assets/logo.png" alt="">
-                    <div class="content">hhhhhh</div>
-                </li>
-                <li class="self_send">
-                    <img src="../assets/avatar.jpeg" alt="">
-                    <div class="content">hhhhhh</div>
-                </li>
-                <li class="other_send">
-                    <img src="../assets/logo.png" alt="">
-                    <div class="content">hhhhhh</div>
-                </li>
-                <li class="self_send">
-                    <img src="../assets/avatar.jpeg" alt="">
-                    <div class="content">hhhhhh</div>
-                </li>
-                <li class="other_send">
-                    <img src="../assets/logo.png" alt="">
-                    <div class="content">hhhhhh</div>
-                </li>
-                <li class="self_send">
-                    <img src="../assets/avatar.jpeg" alt="">
-                    <div class="content">hhhhhh</div>
-                </li>
-                <li class="other_send">
-                    <img src="../assets/logo.png" alt="">
-                    <div class="content">hhhhhh</div>
-                </li>
-                <li class="self_send">
-                    <img src="../assets/avatar.jpeg" alt="">
-                    <div class="content">hhhhhh</div>
-                </li>
-                <li class="other_send">
-                    <img src="../assets/logo.png" alt="">
-                    <div class="content">hhhhhh</div>
-                </li>
-                <li class="self_send">
-                    <img src="../assets/avatar.jpeg" alt="">
-                    <div class="content">hhhhhh</div>
+                    <div class="time">
+                        <span>2019/1/12 17:54</span>
+                    </div>
+                    <div class="from">
+                        <img src="../assets/avatar.jpeg" alt="">
+                        <div class="content">hhhhhh</div>
+                    </div>
                 </li>
             </ul>
         </div>
@@ -89,33 +43,46 @@
             padding: 0 100px;
 
             li {
-                display: flex;
-                align-items: center;
-
-                img {
-                    height: 30px;
-                    margin: 20px;
-                    border-radius: 4px;
-                }
-
-                .content {
-                    background-color: #fff;
-                    border: 1px solid #ddd;
-                    border-radius: 4px;
-                    padding: 10px;
-                }
-
-                &.self_send {
+                list-style: none;
+                .time{
                     display: flex;
-                    justify-content: flex-end;
+                    align-items: center;
+                    justify-content: center;
+                    color: #fff;
+
+                }
+                .from{
+                    display: flex;
+                    align-items: center;
 
                     img {
-                        order: 1;
+                        height: 30px;
+                        margin: 20px;
+                        border-radius: 4px;
                     }
 
                     .content {
-                        order: -1;
+                        background-color: #fff;
+                        border: 1px solid #ddd;
+                        border-radius: 4px;
+                        padding: 10px;
                     }
+                }
+
+                &.self_send {
+                    .from{
+                        display: flex;
+                        justify-content: flex-end;
+
+                        img {
+                            order: 1;
+                        }
+
+                        .content {
+                            order: -1;
+                        }
+                    }
+
                 }
             }
         }
