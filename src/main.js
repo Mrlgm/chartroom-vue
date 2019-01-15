@@ -4,7 +4,6 @@ import router from './router'
 import store from './store'
 import iView from 'iview';
 import 'iview/dist/styles/iview.css';
-import AV from 'leancloud-storage'
 
 Vue.use(iView);
 
