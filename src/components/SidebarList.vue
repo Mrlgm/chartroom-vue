@@ -36,7 +36,7 @@
 
         <Card style="width:300px" class="last_cord" shadow>
             <div>当前用户：mrlgm</div>
-            <a href="#" slot="extra">
+            <a @click="onLogout" slot="extra">
                 <Icon size="26" type="md-exit"></Icon>
             </a>
         </Card>
@@ -44,6 +44,8 @@
 </template>
 
 <script>
+    import {mapMutations, mapActions} from 'vuex'
+
     export default {
         name: "SidebarList",
         data() {
@@ -51,12 +53,23 @@
                 isSelected: {}
             }
         },
+        computed: {},
         methods: {
+            ...mapMutations(['setIsLogin', 'setUser']),
+            ...mapActions(['logout']),
+            onLogout() {
+                this.logout()
+                    .then(() => {
+                        this.setIsLogin(false)
+                        this.setUser(null)
+                        this.$router.push('/')
+                    })
+            },
             a(e) {
                 console.log('xxx')
                 console.log(e)
                 console.log(this)
-                for(let key in this.isSelected){
+                for (let key in this.isSelected) {
                     this.isSelected[key] = false
                 }
                 this.$set(this.isSelected, e, true)

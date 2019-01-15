@@ -25,6 +25,7 @@
     import Title from '../components/Title'
     import SendMessage from '../components/SendMessage'
     import MessageContent from '../components/MessageContent'
+    import {mapActions} from 'vuex'
 
     export default {
         name: "Conversations",
@@ -34,48 +35,62 @@
             SendMessage,
             MessageContent
         },
-        data(){
-            return{
-                isCollapsed:false
+        data() {
+            return {
+                isCollapsed: false
             }
         },
-        computed:{
-            listItemClasses(){
+        computed: {
+            listItemClasses() {
                 return [
                     this.isCollapsed ? 'list' : ''
                 ]
             }
+        },
+        methods: {
+            ...mapActions(['checkLogin'])
+        },
+        created() {
+            console.log('1111')
+            this.checkLogin()
+            console.log('1111')
         }
     }
 </script>
 
 <style lang="scss" scoped>
     @import "../assets/global";
-.conversations{
-    height: 100%;
-    .layout{
+
+    .conversations {
         height: 100%;
-        .list{
+
+        .layout {
             height: 100%;
-            display: inline-block;
-            overflow: hidden;
-            width: 69px;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            vertical-align: bottom;
-            transition: width .2s ease .2s;
-        }
-        .title_bar_wrapper{
-            background-color: $title-color;
-        }
-        .message_content_wrapper{
-            height: 100%;
-            overflow: auto;
-            background: url("../assets/bgchart.jpg") center no-repeat;
-        }
-        .send_message_wrapper{
-            border-top: 1px solid #ddd;
+
+            .list {
+                height: 100%;
+                display: inline-block;
+                overflow: hidden;
+                width: 69px;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                vertical-align: bottom;
+                transition: width .2s ease .2s;
+            }
+
+            .title_bar_wrapper {
+                background-color: $title-color;
+            }
+
+            .message_content_wrapper {
+                height: 100%;
+                overflow: auto;
+                background: url("../assets/bgchart.jpg") center no-repeat;
+            }
+
+            .send_message_wrapper {
+                border-top: 1px solid #ddd;
+            }
         }
     }
-}
 </style>

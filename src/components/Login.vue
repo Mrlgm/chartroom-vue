@@ -1,6 +1,6 @@
 <template>
     <div class="login_com">
-        <Form class="login_form" ref="formInline"  :model="formInline" :rules="ruleInline">
+        <Form class="login_form" ref="formInline" :model="formInline" :rules="ruleInline">
             <FormItem prop="user">
                 <Input type="text" v-model="formInline.user" placeholder="Username">
                     <Icon type="ios-person-outline" slot="prepend"></Icon>
@@ -21,6 +21,8 @@
 </template>
 
 <script>
+    import {mapMutations, mapActions} from 'vuex'
+
     export default {
         name: "Login",
         data() {
@@ -46,17 +48,45 @@
             }
         },
         methods: {
+            ...mapMutations(['setUser', 'setImClient']),
+            ...mapActions(['login', 'signUp']),
             handleSubmit(name) {
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        this.$Message.success('Success!');
+                        this.onLogin()
+
                     } else {
                         this.$Message.error('Fail!');
                     }
                 })
             },
-            handleReset(name){
+            handleReset(name) {
                 this.$refs[name].resetFields();
+            },
+            onLogin() {
+                this.login({username: this.formInline.user, password: this.formInline.password})
+                    .then((res) => {
+                        this.$Message.success('登陆成功!');
+                        this.setUser(res)
+                        this.$router.push('/conversations')
+                    })
+                    .catch((error) => {
+                        if (error.code === 210) {
+                            this.$Message.error('密码错误!');
+                        } else if (error.code === 211) {
+                            this.onSignUp()
+                        } else {
+                            this.$Message.error('系统错误!');
+                        }
+                    })
+            },
+            onSignUp() {
+                this.signUp({username: this.formInline.user, password: this.formInline.password})
+                    .then(res => {
+                        this.setUser({id: res.id, username: res.attributes.username})
+                        this.$Message.success('注册成功!');
+                        this.$router.push('/conversations')
+                    })
             }
         }
 
@@ -64,14 +94,15 @@
 </script>
 
 <style lang="scss" scoped>
-.login_com{
-    width: 300px;
-    .login_form{
-        .login_form_button{
-            text-align: center;
-            margin: 0;
+    .login_com {
+        width: 300px;
+
+        .login_form {
+            .login_form_button {
+                text-align: center;
+                margin: 0;
+            }
         }
     }
-}
 
 </style>
