@@ -32,7 +32,7 @@ const router = new Router({
 
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requireLogin)) {
-        if (!store.state.isLogin) {
+        if (!store.getters.checkLogin) {
             next('/')
         } else {
             next()

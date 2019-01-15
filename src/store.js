@@ -10,6 +10,12 @@ export default new Vuex.Store({
         isLogin: false,
         imClient: null,
     },
+    getters:{
+        checkLogin(){
+            let currentUser =  AV.User.current();
+            return !!currentUser
+        }
+    },
     mutations: {
         setUser(state, payload) {
             state.user = payload
