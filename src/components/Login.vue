@@ -66,19 +66,29 @@
             onLogin() {
                 this.login({username: this.formInline.user, password: this.formInline.password})
                     .then((res) => {
-                        this.$Message.success('登陆成功!');
-                        this.setUser(res)
-                        this.$router.push('/conversations')
+                        this.afterLogin(res)
                     })
                     .catch((error) => {
-                        if (error.code === 210) {
-                            this.$Message.error('密码错误!');
-                        } else if (error.code === 211) {
-                            this.onSignUp()
-                        } else {
-                            this.$Message.error('系统错误!');
-                        }
+                        this.beforeSignUp(error)
                     })
+            },
+            afterLogin(res) {
+                this.$Loading.start();
+                this.setUser(res)
+                this.$router.push('/conversations')
+                this.$Message.success('登陆成功!');
+                this.$Loading.finish();
+            },
+            beforeSignUp(error) {
+                if (error.code === 210) {
+                    this.$Message.error('密码错误!');
+                    this.$Loading.error();
+                } else if (error.code === 211) {
+                    this.onSignUp()
+                } else {
+                    this.$Message.error('系统错误!');
+                    this.$Loading.error();
+                }
             },
             onSignUp() {
                 this.signUp({username: this.formInline.user, password: this.formInline.password})

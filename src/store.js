@@ -41,7 +41,6 @@ export default new Vuex.Store({
                 return true
             }else{
                 let currentUser =  AV.User.current();
-                console.log(currentUser)
                 if (currentUser) {
                     commit('setUser', currentUser.toJSON());
                     commit('setIsLogin', true);
