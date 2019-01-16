@@ -5,7 +5,7 @@
         </div>
         <div class="message_list">
             <Card title="聊天室" :padding="0" shadow style="width: 300px;">
-                <CellGroup @on-click="joinChartRoom">
+                <CellGroup @on-click="a">
                     <Cell v-if="currentConversationId" name="chartRoom" :to="`/conversations/${currentConversationId}`" :selected="true" title="广场"
                           label="sss"/>
                 </CellGroup>
@@ -74,28 +74,6 @@
                         this.setUser(null)
                         this.$router.push('/')
                     })
-            },
-            async joinChartRoom() {
-                console.log('11111')
-                await this.imClient.getChatRoomQuery()
-                    .equalTo('name', '聊天室')
-                    .find()
-                    .then((chatRooms) => {
-                        console.log(chatRooms)
-                        console.log(chatRooms[0].id);
-                        this.chartRoomId = chatRooms[0].id
-                        this.setCurrentConversationId(chatRooms[0].id)
-                        return chatRooms[0].join()
-                    })
-                    .then((success) => {
-                        console.log(success)
-                        //return success.send(new TextMessage('hhhhh'))
-                    })
-                    .then(() => {
-                        console.log('发送成功')
-                    })
-                    .catch(console.error.bind(console));
-                console.log('2222')
             },
             a(e) {
                 console.log('xxx')

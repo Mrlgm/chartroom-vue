@@ -26,8 +26,22 @@
 </template>
 
 <script>
+    import {mapState, mapMutations, mapActions} from 'vuex'
+    import { Event, TextMessage } from 'leancloud-realtime'
     export default {
-        name: "MessageContent"
+        name: "MessageContent",
+        created(){
+             // this.realtime.createIMClient(currentUser)
+             //    .then((client) => {
+             //        commit('setImClient', client)
+             //    })
+        },
+        computed: {
+            ...mapState(['realtime'])
+        },
+        methods:{
+
+        }
     }
 </script>
 

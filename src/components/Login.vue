@@ -78,9 +78,12 @@
             afterLogin(res) {
                 this.$Loading.start();
                 this.setUserAndClient(res)
-                this.$router.push('/conversations')
-                this.$Message.success('登陆成功!');
-                this.$Loading.finish();
+                    .then(() => {
+                        this.$router.push('/conversations')
+                        this.$Message.success('登陆成功!');
+                        this.$Loading.finish();
+                    })
+
             },
             beforeSignUp(error) {
                 if (error.code === 210) {
@@ -95,7 +98,7 @@
             },
             async setUserAndClient(res) {
                 this.setUser(res)
-                await this.realtime.createIMClient(res)
+                return await this.realtime.createIMClient(res)
                     .then((client) => {
                         this.setImClient(client)
                     })
@@ -103,9 +106,10 @@
             onSignUp() {
                 this.signUp({username: this.formInline.user, password: this.formInline.password})
                     .then((res) => {
-                        this.setUserAndClient(res)
-                        this.$Message.success('注册成功!');
-                        this.$router.push('/conversations')
+                        this.setUserAndClient(res).then(() => {
+                            this.$Message.success('注册成功!');
+                            this.$router.push('/conversations')
+                        })
                     })
             }
         }

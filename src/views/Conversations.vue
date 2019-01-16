@@ -51,10 +51,8 @@
             ...mapActions(['checkLogin', 'findChatRoom'])
         },
         created() {
-            this.checkLogin().then(() => {
-                this.findChatRoom()
-            })
-
+           this.checkLogin()
+           this.findChatRoom()
         }
     }
 </script>
