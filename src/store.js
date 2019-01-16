@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import AV from './helper/leanCloud'
+import {TextMessage} from 'leancloud-realtime'
 
 Vue.use(Vuex)
 
@@ -9,10 +10,13 @@ export default new Vuex.Store({
         user: null,
         isLogin: false,
         imClient: null,
+        currentConversation: null,
+        currentConversationId: '',
+        realtime: AV.realtime
     },
-    getters:{
-        checkLogin(){
-            let currentUser =  AV.User.current();
+    getters: {
+        checkLogin() {
+            let currentUser = AV.User.current();
             return !!currentUser
         }
     },
@@ -20,8 +24,17 @@ export default new Vuex.Store({
         setUser(state, payload) {
             state.user = payload
         },
-        setIsLogin(state,payload){
+        setIsLogin(state, payload) {
             state.isLogin = payload
+        },
+        setImClient(state, payload) {
+            state.imClient = payload
+        },
+        setCurrentConversationId(state, payload) {
+            state.currentConversationId = payload
+        },
+        setCurrentConversation(state, payload) {
+            state.currentConversation = payload
         }
     },
     actions: {
@@ -36,15 +49,34 @@ export default new Vuex.Store({
             return await AV.User.logOut()
             //return await state.imClient.close()
         },
-        checkLogin({commit, state}) {
-            if(state.isLogin){
+        async findChatRoom({commit, state}) {
+            return await state.imClient.getChatRoomQuery()
+                .equalTo('name', '聊天室')
+                .find()
+                .then((chatRooms) => {
+                    commit('setCurrentConversationId', chatRooms[0].id)
+                    return chatRooms[0].join()
+                })
+                .then((conversation) => {
+                    commit('setCurrentConversation', conversation)
+                })
+                .catch(console.error.bind(console));
+        },
+        async sendMessage({commit, state}, data) {
+            return await state.currentConversation.send(new TextMessage(data))
+        },
+        async checkLogin({commit, state}) {
+            if (state.isLogin) {
                 return true
-            }else{
-                let currentUser =  AV.User.current();
+            } else {
+                let currentUser = AV.User.current();
                 if (currentUser) {
                     commit('setUser', currentUser.toJSON());
                     commit('setIsLogin', true);
-                    return true;
+                    return await state.realtime.createIMClient(currentUser)
+                        .then((client) => {
+                            commit('setImClient', client)
+                        })
                 } else {
                     return false;
                 }

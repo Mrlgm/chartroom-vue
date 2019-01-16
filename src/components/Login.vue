@@ -21,7 +21,7 @@
 </template>
 
 <script>
-    import {mapMutations, mapActions} from 'vuex'
+    import {mapState, mapMutations, mapActions} from 'vuex'
 
     export default {
         name: "Login",
@@ -46,6 +46,9 @@
                     ]
                 }
             }
+        },
+        computed: {
+            ...mapState(['realtime'])
         },
         methods: {
             ...mapMutations(['setUser', 'setImClient']),
@@ -74,7 +77,7 @@
             },
             afterLogin(res) {
                 this.$Loading.start();
-                this.setUser(res)
+                this.setUserAndClient(res)
                 this.$router.push('/conversations')
                 this.$Message.success('登陆成功!');
                 this.$Loading.finish();
@@ -90,10 +93,17 @@
                     this.$Loading.error();
                 }
             },
+            async setUserAndClient(res) {
+                this.setUser(res)
+                await this.realtime.createIMClient(res)
+                    .then((client) => {
+                        this.setImClient(client)
+                    })
+            },
             onSignUp() {
                 this.signUp({username: this.formInline.user, password: this.formInline.password})
-                    .then(res => {
-                        this.setUser({id: res.id, username: res.attributes.username})
+                    .then((res) => {
+                        this.setUserAndClient(res)
                         this.$Message.success('注册成功!');
                         this.$router.push('/conversations')
                     })

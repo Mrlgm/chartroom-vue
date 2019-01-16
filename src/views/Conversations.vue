@@ -10,7 +10,8 @@
                     <Title></Title>
                 </Header>
                 <Content class="message_content_wrapper">
-                    <MessageContent></MessageContent>
+                    <!--<MessageContent></MessageContent>-->
+                    <router-view/>
                 </Content>
                 <Footer class="send_message_wrapper">
                     <SendMessage></SendMessage>
@@ -24,7 +25,6 @@
     import SidebarList from '../components/SidebarList'
     import Title from '../components/Title'
     import SendMessage from '../components/SendMessage'
-    import MessageContent from '../components/MessageContent'
     import {mapActions} from 'vuex'
 
     export default {
@@ -33,7 +33,7 @@
             SidebarList,
             Title,
             SendMessage,
-            MessageContent
+
         },
         data() {
             return {
@@ -48,12 +48,13 @@
             }
         },
         methods: {
-            ...mapActions(['checkLogin'])
+            ...mapActions(['checkLogin', 'findChatRoom'])
         },
         created() {
-            console.log('1111')
-            this.checkLogin()
-            console.log('1111')
+            this.checkLogin().then(() => {
+                this.findChatRoom()
+            })
+
         }
     }
 </script>
