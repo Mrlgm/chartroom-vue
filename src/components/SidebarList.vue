@@ -5,7 +5,7 @@
         </div>
         <div class="message_list">
             <Card title="聊天室" :padding="0" shadow style="width: 300px;">
-                <CellGroup @on-click="a">
+                <CellGroup>
                     <Cell v-if="currentConversationId" name="chartRoom" :to="`/conversations/${currentConversationId}`" :selected="true" title="广场"
                           label="sss"/>
                 </CellGroup>
@@ -76,14 +76,10 @@
                     })
             },
             a(e) {
-                console.log('xxx')
-                console.log(e)
-                console.log(this)
                 for (let key in this.isSelected) {
                     this.isSelected[key] = false
                 }
                 this.$set(this.isSelected, e, true)
-                console.log(this.isSelected)
             }
         }
     }

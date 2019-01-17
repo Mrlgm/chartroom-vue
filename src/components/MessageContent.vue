@@ -28,16 +28,23 @@
 <script>
     import {mapState, mapMutations, mapActions} from 'vuex'
     import { Event, TextMessage } from 'leancloud-realtime'
+    import AV from 'leancloud-storage'
+
     export default {
         name: "MessageContent",
         created(){
-             // this.realtime.createIMClient(currentUser)
-             //    .then((client) => {
-             //        commit('setImClient', client)
-             //    })
+            let currentUser = AV.User.current();
+             this.realtime.createIMClient(currentUser)
+                .then((user) => {
+                    user.on(Event.MESSAGE, function(message, conversation) {
+                        console.log('1111')
+                        console.log('[user] received a message from [' + message.from + ']: ' + message.text);
+                    });
+                })
+
         },
         computed: {
-            ...mapState(['realtime'])
+            ...mapState(['realtime','user'])
         },
         methods:{
 

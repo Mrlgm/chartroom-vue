@@ -50,17 +50,22 @@ export default new Vuex.Store({
             //return await state.imClient.close()
         },
         async findChatRoom({commit, state}) {
-            return await state.imClient.getChatRoomQuery()
-                .equalTo('name', '聊天室')
-                .find()
-                .then((chatRooms) => {
-                    commit('setCurrentConversationId', chatRooms[0].id)
-                    return chatRooms[0].join()
+            let user = AV.User.current();
+            return await state.realtime.createIMClient(user)
+                .then((client) => {
+                    client.getChatRoomQuery()
+                        .equalTo('name', '聊天室')
+                        .find()
+                        .then((chatRooms) => {
+                            commit('setCurrentConversationId', chatRooms[0].id)
+                            return chatRooms[0].join()
+                        })
+                        .then((conversation) => {
+                            commit('setCurrentConversation', conversation)
+                        })
+                        .catch(console.error.bind(console));
                 })
-                .then((conversation) => {
-                    commit('setCurrentConversation', conversation)
-                })
-                .catch(console.error.bind(console));
+
         },
         async sendMessage({commit, state}, data) {
             return await state.currentConversation.send(new TextMessage(data))
@@ -73,10 +78,11 @@ export default new Vuex.Store({
                 if (currentUser) {
                     commit('setUser', currentUser.toJSON());
                     commit('setIsLogin', true);
-                    return await state.realtime.createIMClient(currentUser)
+                    await state.realtime.createIMClient(currentUser)
                         .then((client) => {
                             commit('setImClient', client)
                         })
+                    return true
                 } else {
                     return false;
                 }
