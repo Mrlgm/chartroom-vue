@@ -4,7 +4,7 @@
             <ul class="messages" v-chat-scroll>
                 <li v-for="item in messageList" :class="[item.from === user.objectId ? activeClass : '']">
                     <div class="time">
-                        <span>2019/1/12 17:53</span>
+                        <span>{{item.timestamp | formatTime}}</span>
                     </div>
                     <div class="from">
                         <img src="../assets/logo.png" alt="">
@@ -50,7 +50,7 @@
                 .then((user) => {
                     user.getConversation(this.$route.params.id).then((conversation) => {
                         conversation.queryMessages({
-                            limit: 20, // limit 取值范围 1~1000，默认 20
+                            limit: 100, // limit 取值范围 1~1000，默认 20
                         }).then((messages) => {
                             // 最新的十条消息，按时间增序排列
                             this.messageList = messages
