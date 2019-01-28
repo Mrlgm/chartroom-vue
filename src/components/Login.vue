@@ -77,13 +77,10 @@
             },
             afterLogin(res) {
                 this.$Loading.start();
-                this.setUserAndClient(res)
-                    .then(() => {
-                        this.$router.push('/conversations')
-                        this.$Message.success('登陆成功!');
-                        this.$Loading.finish();
-                    })
-
+                this.setUser(res.toJSON())
+                this.$router.push('/conversations')
+                this.$Message.success('登陆成功!');
+                this.$Loading.finish();
             },
             beforeSignUp(error) {
                 if (error.code === 210) {
@@ -96,20 +93,13 @@
                     this.$Loading.error();
                 }
             },
-            async setUserAndClient(res) {
-                this.setUser(res)
-                return await this.realtime.createIMClient(res)
-                    .then((client) => {
-                        this.setImClient(client)
-                    })
-            },
             onSignUp() {
                 this.signUp({username: this.formInline.user, password: this.formInline.password})
                     .then((res) => {
-                        this.setUserAndClient(res).then(() => {
-                            this.$Message.success('注册成功!');
-                            this.$router.push('/conversations')
-                        })
+                        this.setUser(res.toJSON())
+                        this.$Message.success('注册成功!');
+                        this.$router.push('/conversations')
+
                     })
             }
         }

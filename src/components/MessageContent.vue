@@ -1,23 +1,14 @@
 <template>
-    <div class="message_content">
-        <div class="message_list">
-            <ul>
-                <li class="other_send">
+    <div id="messageContent" class="message_content">
+        <div class="message_list" >
+            <ul class="messages" v-chat-scroll>
+                <li v-for="item in messageList" :class="[item.from === user.objectId ? activeClass : '']">
                     <div class="time">
                         <span>2019/1/12 17:53</span>
                     </div>
                     <div class="from">
                         <img src="../assets/logo.png" alt="">
-                        <div class="content">hhhhhh</div>
-                    </div>
-                </li>
-                <li class="self_send">
-                    <div class="time">
-                        <span>2019/1/12 17:54</span>
-                    </div>
-                    <div class="from">
-                        <img src="../assets/avatar.jpeg" alt="">
-                        <div class="content">hhhhhh</div>
+                        <div class="content">{{item.text}}</div>
                     </div>
                 </li>
             </ul>
@@ -27,28 +18,63 @@
 
 <script>
     import {mapState, mapMutations, mapActions} from 'vuex'
-    import { Event, TextMessage } from 'leancloud-realtime'
+    import {Event, TextMessage} from 'leancloud-realtime'
     import AV from 'leancloud-storage'
+    import Bus from '../helper/bus'
+    import Vue from 'vue'
+    import VueChatScroll from 'vue-chat-scroll'
+    Vue.use(VueChatScroll)
 
     export default {
         name: "MessageContent",
-        created(){
+        data() {
+            return {
+                messageList: [],
+                activeClass: 'self_send',
+            }
+        },
+        watch: {
+            chatlog() {
+                console.log("chatlog change");
+                this.$nextTick(() => {
+                    let container = this.$el.querySelector("#messageContent");
+                    console.log(container);
+                    container.scrollTop = container.scrollHeight;
+                })
+            }
+
+        },
+        created() {
             let currentUser = AV.User.current();
-             this.realtime.createIMClient(currentUser)
+            this.realtime.createIMClient(currentUser)
                 .then((user) => {
-                    user.on(Event.MESSAGE, function(message, conversation) {
-                        console.log('1111')
-                        console.log('[user] received a message from [' + message.from + ']: ' + message.text);
+                    user.getConversation(this.$route.params.id).then((conversation) => {
+                        conversation.queryMessages({
+                            limit: 20, // limit 取值范围 1~1000，默认 20
+                        }).then((messages) => {
+                            // 最新的十条消息，按时间增序排列
+                            this.messageList = messages
+                            console.log(messages)
+                        }).catch(console.error.bind(console));
+                    }).catch(console.error.bind(console));
+                    user.on(Event.MESSAGE, (message, conversation) => {
+                        console.log('[Bob] received a message from [' + message.from + ']: ' + message.text);
+                        // 收到消息之后一般的做法是做 UI 展现，示例代码在此处做消息回复，仅为了演示收到消息之后的操作，仅供参考。
+                        this.messageList.push(message)
                     });
                 })
+            Bus.$on('sendSuccess', (message) => {
+                this.messageList.push(message)
+            })
 
+        },
+        mounted() {
+            console.log(this.chatlog)
         },
         computed: {
-            ...mapState(['realtime','user'])
+            ...mapState(['realtime', 'user', 'currentConversationId'])
         },
-        methods:{
-
-        }
+        methods: {}
     }
 </script>
 
@@ -62,17 +88,23 @@
         .message_list {
             width: 80%;
             padding: 0 100px;
+            .messages{
+                height: 100%;
+                overflow: auto;
+            }
 
             li {
                 list-style: none;
-                .time{
+
+                .time {
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     color: #fff;
 
                 }
-                .from{
+
+                .from {
                     display: flex;
                     align-items: center;
 
@@ -91,7 +123,7 @@
                 }
 
                 &.self_send {
-                    .from{
+                    .from {
                         display: flex;
                         justify-content: flex-end;
 

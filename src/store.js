@@ -70,7 +70,7 @@ export default new Vuex.Store({
         async sendMessage({commit, state}, data) {
             return await state.currentConversation.send(new TextMessage(data))
         },
-        async checkLogin({commit, state}) {
+        checkLogin({commit, state}) {
             if (state.isLogin) {
                 return true
             } else {
@@ -78,10 +78,6 @@ export default new Vuex.Store({
                 if (currentUser) {
                     commit('setUser', currentUser.toJSON());
                     commit('setIsLogin', true);
-                    await state.realtime.createIMClient(currentUser)
-                        .then((client) => {
-                            commit('setImClient', client)
-                        })
                     return true
                 } else {
                     return false;

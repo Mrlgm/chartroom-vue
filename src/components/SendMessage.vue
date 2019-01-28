@@ -9,6 +9,7 @@
 
 <script>
     import {mapActions} from 'vuex'
+    import Bus from '../helper/bus'
 
     export default {
         name: "SendMessage",
@@ -20,7 +21,9 @@
         methods: {
             ...mapActions(['sendMessage']),
             pushMessage() {
-                this.sendMessage(this.value)
+                this.sendMessage(this.value).then((message)=>{
+                    Bus.$emit('sendSuccess', message);
+                })
                 this.value = ''
             }
         }
