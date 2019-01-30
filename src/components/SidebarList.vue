@@ -6,7 +6,8 @@
         <div class="message_list">
             <Card title="聊天室" :padding="0" shadow style="width: 300px;">
                 <CellGroup>
-                    <Cell v-if="currentConversationId" name="chartRoom" :to="`/conversations/${currentConversationId}`" :selected="true" title="广场"
+                    <Cell v-if="currentConversationId" name="chartRoom" :to="`/conversations/${currentConversationId}`"
+                          :selected="true" title="广场"
                           label="sss"/>
                 </CellGroup>
             </Card>
@@ -49,6 +50,7 @@
 
 <script>
     import {mapState, mapMutations, mapActions} from 'vuex'
+    import AV from 'leancloud-storage'
 
     export default {
         name: "SidebarList",
@@ -59,10 +61,17 @@
             }
         },
         computed: {
-            ...mapState(['imClient', 'user','currentConversationId'])
+            ...mapState(['realtime', 'user', 'currentConversationId'])
         },
-        created() {
+        mounted() {
+            let currentUser = AV.User.current();
+            this.realtime.createIMClient(currentUser).then((user) => {
 
+                let query = user.getQuery();
+                query.containsMembers([this.user.objectId]).find().then(function (conversations) {
+                    console.log(conversations);
+                }).catch(console.error.bind(console));
+            })
         },
         methods: {
             ...mapMutations(['setIsLogin', 'setUser', 'setCurrentConversationId']),
