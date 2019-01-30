@@ -33,17 +33,6 @@
                 activeClass: 'self_send',
             }
         },
-        watch: {
-            chatlog() {
-                console.log("chatlog change");
-                this.$nextTick(() => {
-                    let container = this.$el.querySelector("#messageContent");
-                    console.log(container);
-                    container.scrollTop = container.scrollHeight;
-                })
-            }
-
-        },
         created() {
             let currentUser = AV.User.current();
             this.realtime.createIMClient(currentUser)
@@ -67,9 +56,6 @@
                 this.messageList.push(message)
             })
 
-        },
-        mounted() {
-            console.log(this.chatlog)
         },
         computed: {
             ...mapState(['realtime', 'user', 'currentConversationId'])
