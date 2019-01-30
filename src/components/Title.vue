@@ -1,7 +1,7 @@
 <template>
     <div class="title_bar">
         <div>
-            <h2>hello</h2>
+            <h2>{{name}}</h2>
         </div>
         <img src="../assets/logo.png" alt="">
         <div class="icon_size">
@@ -11,8 +11,23 @@
 </template>
 
 <script>
+    import {mapState,} from 'vuex'
+    import Bus from '../helper/bus'
     export default {
-        name: "Title"
+        name: "Title",
+        computed:{
+            ...mapState['currentConversation']
+        },
+        data(){
+            return{
+                name:'hello'
+            }
+        },
+        mounted(){
+            Bus.$on('setTitle',(name)=>{
+                this.name = name
+            })
+        }
     }
 </script>
 
