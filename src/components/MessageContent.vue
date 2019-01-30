@@ -34,18 +34,22 @@
             }
         },
         created() {
+            this.setCurrentConversationId(this.$route.params.id)
             let currentUser = AV.User.current();
             this.realtime.createIMClient(currentUser)
                 .then((user) => {
                     user.getConversation(this.$route.params.id).then((conversation) => {
+                        // 设置当前对话
+                        Bus.$emit('setTitle',conversation._attributes.name)
+                        this.setCurrentConversation(conversation)
                         conversation.queryMessages({
                             limit: 100, // limit 取值范围 1~1000，默认 20
                         }).then((messages) => {
-                            // 最新的十条消息，按时间增序排列
+                            // 最新的100条消息，按时间增序排列
                             this.messageList = messages
-                            console.log(messages)
                         }).catch(console.error.bind(console));
                     }).catch(console.error.bind(console));
+                    //监听消息
                     user.on(Event.MESSAGE, (message, conversation) => {
                         console.log('[Bob] received a message from [' + message.from + ']: ' + message.text);
                         // 收到消息之后一般的做法是做 UI 展现，示例代码在此处做消息回复，仅为了演示收到消息之后的操作，仅供参考。
@@ -60,7 +64,9 @@
         computed: {
             ...mapState(['realtime', 'user', 'currentConversationId'])
         },
-        methods: {}
+        methods: {
+            ...mapMutations(['setCurrentConversation','setCurrentConversationId'])
+        }
     }
 </script>
 
@@ -72,7 +78,7 @@
         justify-content: center;
 
         .message_list {
-            width: 80%;
+            width: 100%;
             padding: 0 100px;
             .messages{
                 height: 100%;

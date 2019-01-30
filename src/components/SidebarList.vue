@@ -6,7 +6,7 @@
         <div class="message_list">
             <Card title="聊天室" :padding="0" shadow style="width: 300px;">
                 <CellGroup>
-                    <Cell v-if="currentConversationId" name="chartRoom" :to="`/conversations/${currentConversationId}`"
+                    <Cell name="chartRoom" to="/conversations/5c3e8d989f5454006bf853d8"
                           :selected="true" title="广场"
                           label="sss"/>
                 </CellGroup>
@@ -66,7 +66,6 @@
         mounted() {
             let currentUser = AV.User.current();
             this.realtime.createIMClient(currentUser).then((user) => {
-
                 let query = user.getQuery();
                 query.containsMembers([this.user.objectId]).find().then(function (conversations) {
                     console.log(conversations);

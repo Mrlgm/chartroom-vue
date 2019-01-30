@@ -25,7 +25,8 @@
     import SidebarList from '../components/SidebarList'
     import Title from '../components/Title'
     import SendMessage from '../components/SendMessage'
-    import {mapActions} from 'vuex'
+    import {mapActions,mapState} from 'vuex'
+    import AV from 'leancloud-storage'
 
     export default {
         name: "Conversations",
@@ -41,6 +42,7 @@
             }
         },
         computed: {
+            ...mapState(['realtime', 'user', 'currentConversationId']),
             listItemClasses() {
                 return [
                     this.isCollapsed ? 'list' : ''
@@ -48,11 +50,26 @@
             }
         },
         methods: {
-            ...mapActions(['checkLogin', 'findChatRoom'])
+            ...mapActions(['checkLogin', 'findChatRoom']),
+            async joinChatRoom() {
+                let user = AV.User.current();
+                return await this.realtime.createIMClient(user)
+                    .then((client) => {
+                        client.getChatRoomQuery()
+                            .equalTo('name', '聊天室')
+                            .find()
+                            .then((chatRooms) => {
+                                return chatRooms[0].join()
+                            })
+                            .then((conversation) => {
+                            })
+                            .catch(console.error.bind(console));
+                    })
+            }
         },
         created() {
-           this.checkLogin()
-           this.findChatRoom()
+            this.checkLogin()
+            this.joinChatRoom()
         }
     }
 </script>

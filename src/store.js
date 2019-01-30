@@ -49,24 +49,6 @@ export default new Vuex.Store({
             return await AV.User.logOut()
             //return await state.imClient.close()
         },
-        async findChatRoom({commit, state}) {
-            let user = AV.User.current();
-            return await state.realtime.createIMClient(user)
-                .then((client) => {
-                    client.getChatRoomQuery()
-                        .equalTo('name', '聊天室')
-                        .find()
-                        .then((chatRooms) => {
-                            commit('setCurrentConversationId', chatRooms[0].id)
-                            return chatRooms[0].join()
-                        })
-                        .then((conversation) => {
-                            commit('setCurrentConversation', conversation)
-                        })
-                        .catch(console.error.bind(console));
-                })
-
-        },
         async sendMessage({commit, state}, data) {
             return await state.currentConversation.send(new TextMessage(data))
         },
