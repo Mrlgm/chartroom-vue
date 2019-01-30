@@ -1,6 +1,5 @@
 .DS_Store
 node_modules
-/dist
 /src/helper/key.js
 
 # local env files
