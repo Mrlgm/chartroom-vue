@@ -62,6 +62,9 @@
                                 return chatRooms[0].join()
                             })
                             .then((conversation) => {
+                                if(conversation){
+                                    console.log('加入成功')
+                                }
                             })
                             .catch(console.error.bind(console));
                     })
