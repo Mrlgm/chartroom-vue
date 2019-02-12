@@ -65,6 +65,7 @@
             ...mapState(['realtime', 'user', 'currentConversationId']),
         },
         mounted() {
+            this.checkSelected(this.$route.params.id)
             let currentUser = AV.User.current();
             this.realtime.createIMClient(currentUser).then((user) => {
                 let query = user.getQuery();
