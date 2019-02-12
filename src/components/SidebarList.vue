@@ -5,26 +5,26 @@
         </div>
         <div class="message_list">
             <Card title="聊天室" :padding="0" shadow style="width: 300px;">
-                <CellGroup>
-                    <Cell name="chartRoom" to="/conversations/5c3e8d989f5454006bf853d8"
-                          :selected="true" title="广场"
-                          label="sss"/>
+                <CellGroup @on-click="checkSelected">
+                    <Cell name="5c3e8d989f5454006bf853d8" to="/conversations/5c3e8d989f5454006bf853d8"
+                          :selected="isSelected['5c3e8d989f5454006bf853d8']"
+                          ref="5c3e8d989f5454006bf853d8"
+                          title="广场"/>
                 </CellGroup>
             </Card>
             <Card title="单聊" icon="ios-person" :padding="0" shadow style="width: 300px;">
-                <CellGroup @on-click="a" class="box">
-                    <Cell name="11" title="Only show titles" label="sss"/>
-                    <Cell name="22" title="Only show titles"/>
-                    <Cell name="33" title="Only show titles"/>
-                    <Cell name="44" title="Only show titles"/>
-                    <Cell name="55" title="Only show titles"/>
-                    <Cell title="With Badge">
-                        <Badge :count="10" slot="extra"/>
-                    </Cell>
+                <CellGroup @on-click="checkSelected" class="box">
+                    <Cell v-for="item in singleList"
+                          :to="`/conversations/${item.id}`"
+                          :selected="isSelected[item.id]"
+                          :name="item.id"
+                          :ref="item.id"
+                          :title="item.name"
+                          :label="item.lastMessage ? item.lastMessage.text:''"/>
                 </CellGroup>
             </Card>
             <Card title="群聊" icon="ios-people" :padding="0" shadow style="width: 300px;">
-                <CellGroup class="box" @on-click="a">
+                <CellGroup class="box" @on-click="checkSelected">
                     <Cell ref="11" :selected="isSelected[11]" name="11" title="Only show titles" label="sss"/>
                     <Cell ref="22" :selected="isSelected[22]" name="22" title="Only show titles"/>
                     <Cell ref="33" :selected="isSelected[33]" name="33" title="Only show titles"/>
@@ -57,18 +57,20 @@
         data() {
             return {
                 isSelected: {},
-                chartRoomId: ''
+                chartRoomId: '',
+                singleList: []
             }
         },
         computed: {
-            ...mapState(['realtime', 'user', 'currentConversationId'])
+            ...mapState(['realtime', 'user', 'currentConversationId']),
         },
         mounted() {
             let currentUser = AV.User.current();
             this.realtime.createIMClient(currentUser).then((user) => {
                 let query = user.getQuery();
-                query.containsMembers([this.user.objectId]).find().then(function (conversations) {
+                query.containsMembers([this.user.objectId]).find().then((conversations) => {
                     console.log(conversations);
+                    this.singleList = conversations
                 }).catch(console.error.bind(console));
             })
         },
@@ -83,10 +85,11 @@
                         this.$router.push('/')
                     })
             },
-            a(e) {
+            checkSelected(e) {
                 for (let key in this.isSelected) {
                     this.isSelected[key] = false
                 }
+                console.log(e)
                 this.$set(this.isSelected, e, true)
             }
         }

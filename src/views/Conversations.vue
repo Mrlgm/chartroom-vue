@@ -11,7 +11,7 @@
                 </Header>
                 <Content class="message_content_wrapper">
                     <!--<MessageContent></MessageContent>-->
-                    <router-view/>
+                    <router-view :key="$route.fullPath"/>
                 </Content>
                 <Footer class="send_message_wrapper">
                     <SendMessage></SendMessage>
