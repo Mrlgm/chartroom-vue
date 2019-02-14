@@ -10,7 +10,10 @@
         <Modal v-model="modal1"
                title="添加好友"
         >
-            <p v-for="item in friendsList">{{item.attributes.username}}</p>
+            <RadioGroup v-model="friend" vertical>
+                <Radio v-for="item in friendsList" :label="item.username" :disabled="item.id === user.objectId"></Radio>
+                {{friend}}
+            </RadioGroup>
         </Modal>
     </div>
 </template>
@@ -23,12 +26,13 @@
     export default {
         name: "Title",
         computed: {
-            ...mapState['currentConversation']
+            ...mapState(['currentConversation', 'user'])
         },
         data() {
             return {
                 name: 'hello',
                 modal1: false,
+                friend: '',
                 friendsList: []
             }
         },
@@ -38,7 +42,10 @@
             })
             let query = new AV.Query('_User')
             query.find().then((results) => {
-                this.friendsList = results
+                this.friendsList = results.map((item) => {
+                    return {...item.attributes, id: item.id}
+                })
+                console.log(this.friendsList)
             }, function (error) {
             });
 
