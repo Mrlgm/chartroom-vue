@@ -51,6 +51,7 @@
 <script>
     import {mapState, mapMutations, mapActions} from 'vuex'
     import AV from 'leancloud-storage'
+    import Bus from '../helper/bus'
 
     export default {
         name: "SidebarList",
@@ -73,6 +74,9 @@
                     console.log(conversations);
                     this.singleList = conversations
                 }).catch(console.error.bind(console));
+            })
+            Bus.$on('newConversation', (conversation) => {
+                this.singleList.push(conversation)
             })
         },
         methods: {

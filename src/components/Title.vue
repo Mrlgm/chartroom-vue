@@ -9,9 +9,12 @@
         </div>
         <Modal v-model="modal1"
                title="添加好友"
-        >
+               @on-ok="ok">
             <RadioGroup v-model="friend" vertical>
-                <Radio v-for="item in friendsList" :label="item.username" :disabled="item.id === user.objectId"></Radio>
+                <Radio v-for="item in friendsList"
+                       :key="item.id"
+                       :label="item.username"
+                       :disabled="item.id === user.objectId"></Radio>
                 {{friend}}
             </RadioGroup>
         </Modal>
@@ -26,7 +29,7 @@
     export default {
         name: "Title",
         computed: {
-            ...mapState(['currentConversation', 'user'])
+            ...mapState(['currentConversation', 'user', 'realtime'])
         },
         data() {
             return {
@@ -49,6 +52,26 @@
             }, function (error) {
             });
 
+        },
+        methods: {
+            ok() {
+                if (this.friend === '') {
+                    return undefined
+                } else {
+                    let currentUser = AV.User.current();
+                    this.realtime.createIMClient(currentUser).then((user) => {
+                        // 创建与Jerry之间的对话
+                        return user.createConversation({
+                            members: [this.friend],
+                            name: `${this.user.username} & ${this.friend}`,
+                        });
+                    }).then(function (conversation) {
+                        // 发送消息
+                        Bus.$emit('newConversation',conversation)
+                        console.log(conversation)
+                    })
+                }
+            }
         }
     }
 </script>
