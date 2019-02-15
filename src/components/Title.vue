@@ -48,7 +48,6 @@
                 this.friendsList = results.map((item) => {
                     return {...item.attributes, id: item.id}
                 })
-                console.log(this.friendsList)
             }, function (error) {
             });
 
@@ -68,7 +67,6 @@
                     }).then(function (conversation) {
                         // 发送消息
                         Bus.$emit('newConversation',conversation)
-                        console.log(conversation)
                     })
                 }
             }

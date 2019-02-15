@@ -15,6 +15,7 @@
             <Card title="单聊" icon="ios-person" :padding="0" shadow style="width: 300px;">
                 <CellGroup @on-click="checkSelected" class="box">
                     <Cell v-for="item in singleList"
+                          :key="item.id"
                           :to="`/conversations/${item.id}`"
                           :selected="isSelected[item.id]"
                           :name="item.id"
@@ -71,7 +72,6 @@
             this.realtime.createIMClient(currentUser).then((user) => {
                 let query = user.getQuery();
                 query.containsMembers([this.user.objectId]).find().then((conversations) => {
-                    console.log(conversations);
                     this.singleList = conversations
                 }).catch(console.error.bind(console));
             })
@@ -94,7 +94,6 @@
                 for (let key in this.isSelected) {
                     this.isSelected[key] = false
                 }
-                console.log(e)
                 this.$set(this.isSelected, e, true)
             }
         }
