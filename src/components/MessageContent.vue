@@ -1,6 +1,6 @@
 <template>
     <div id="messageContent" class="message_content">
-        <div class="message_list" >
+        <div class="message_list">
             <ul class="messages" v-chat-scroll>
                 <li v-for="item in messageList" :class="[item.from === user.objectId ? activeClass : '']">
                     <div class="time">
@@ -8,7 +8,11 @@
                     </div>
                     <div class="from">
                         <img src="../assets/logo.png" alt="">
-                        <div class="content">{{item.text}}</div>
+                        <div>
+                            <div :class="[item.from === user.objectId ? activeNameClass : '']">{{nameList[item.from]}}
+                            </div>
+                            <div class="content">{{item.text}}</div>
+                        </div>
                     </div>
                 </li>
             </ul>
@@ -23,6 +27,7 @@
     import Bus from '../helper/bus'
     import Vue from 'vue'
     import VueChatScroll from 'vue-chat-scroll'
+
     Vue.use(VueChatScroll)
 
     export default {
@@ -31,41 +36,55 @@
             return {
                 messageList: [],
                 activeClass: 'self_send',
+                activeNameClass: 'self_name',
+                nameList: {}
             }
         },
         created() {
             this.setCurrentConversationId(this.$route.params.id)
             let currentUser = AV.User.current();
-            this.realtime.createIMClient(currentUser)
-                .then((user) => {
-                    user.getConversation(this.$route.params.id).then((conversation) => {
-                        // 设置当前对话
-                        Bus.$emit('setTitle',conversation._attributes.name)
-                        this.setCurrentConversation(conversation)
-                        conversation.queryMessages({
-                            limit: 100, // limit 取值范围 1~1000，默认 20
-                        }).then((messages) => {
-                            // 最新的100条消息，按时间增序排列
-                            this.messageList = messages
-                        }).catch(console.error.bind(console));
-                    }).catch(console.error.bind(console));
-                    //监听消息
-                    user.on(Event.MESSAGE, (message, conversation) => {
-                        console.log('[Bob] received a message from [' + message.from + ']: ' + message.text);
-                        // 收到消息之后一般的做法是做 UI 展现，示例代码在此处做消息回复，仅为了演示收到消息之后的操作，仅供参考。
-                        this.messageList.push(message)
-                    });
+            this.getNameList()
+                .then(() => {
+                    this.realtime.createIMClient(currentUser)
+                        .then((user) => {
+                            user.getConversation(this.$route.params.id)
+                                .then((conversation) => {
+                                    // 设置当前对话
+                                    Bus.$emit('setTitle', conversation._attributes.name)
+                                    this.setCurrentConversation(conversation)
+                                    conversation.queryMessages({
+                                        limit: 100, // limit 取值范围 1~1000，默认 20
+                                    }).then((messages) => {
+                                        // 最新的100条消息，按时间增序排列
+                                        this.messageList = messages
+                                    }).catch(console.error.bind(console));
+                                }).catch(console.error.bind(console));
+                            //监听消息
+                            user.on(Event.MESSAGE, (message, conversation) => {
+                                console.log('[Bob] received a message from [' + message.from + ']: ' + message.text);
+                                // 收到消息之后一般的做法是做 UI 展现，示例代码在此处做消息回复，仅为了演示收到消息之后的操作，仅供参考。
+                                this.messageList.push(message)
+                            });
+                        })
                 })
             Bus.$on('sendSuccess', (message) => {
                 this.messageList.push(message)
             })
-
         },
         computed: {
             ...mapState(['realtime', 'user', 'currentConversationId'])
         },
         methods: {
-            ...mapMutations(['setCurrentConversation','setCurrentConversationId'])
+            ...mapMutations(['setCurrentConversation', 'setCurrentConversationId']),
+            getNameList() {
+                let query = new AV.Query('_User')
+                return query.find().then((results) => {
+                    results.forEach((item) => {
+                        this.nameList[item.id] = item.attributes.username
+                    })
+                })
+            },
+
         }
     }
 </script>
@@ -80,7 +99,8 @@
         .message_list {
             width: 100%;
             padding: 0 100px;
-            .messages{
+
+            .messages {
                 height: 100%;
                 overflow: auto;
             }
@@ -104,6 +124,11 @@
                         height: 30px;
                         margin: 20px;
                         border-radius: 4px;
+                    }
+
+                    .self_name {
+                        display: flex;
+                        justify-content: flex-end;
                     }
 
                     .content {
