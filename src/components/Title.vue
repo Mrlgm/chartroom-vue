@@ -60,8 +60,12 @@
                     let currentUser = AV.User.current();
                     this.realtime.createIMClient(currentUser).then((user) => {
                         // 创建与Jerry之间的对话
+                        let item = this.friendsList.filter((item)=>{
+                            return item.username === this.friend
+                        })
+                        console.log(item)
                         return user.createConversation({
-                            members: [this.friend],
+                            members: [item[0].id],
                             name: `${this.user.username} & ${this.friend}`,
                         });
                     }).then(function (conversation) {
